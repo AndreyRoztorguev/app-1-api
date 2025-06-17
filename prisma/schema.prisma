@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  websiteId   Int      @unique
+  banner      Json?
+  rating      Rating   @default(FIVE)
+  Website     Website  @relation(fields: [websiteId], references: [id])
+  Tag         Tag[]    @relation("ServiceTags")
+}
+
+model Tag {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  created_at DateTime  @default(now())
+  updated_at DateTime
+  Service    Service[] @relation("ServiceTags")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  surname  String?
+  email    String  @unique
+  password String
+  avatar   Json?
+  banner   Json?
+}
+
+model Website {
+  id      Int      @id @default(autoincrement())
+  url     String
+  name    String
+  icon    String
+  Service Service?
+}
+
+enum Rating {
+  ONE
+  TWO
+  THREE
+  FOUR
+  FIVE
+}
